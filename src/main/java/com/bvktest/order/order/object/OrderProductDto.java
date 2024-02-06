@@ -1,4 +1,4 @@
-package com.bvktest.order.order.model;
+package com.bvktest.order.order.object;
 
 import lombok.*;
 
@@ -7,8 +7,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-public class OrderProductRequest {
-    private String traceId;
+public class OrderProductDto {
     private String productId;
     private Integer quantity;
 }
