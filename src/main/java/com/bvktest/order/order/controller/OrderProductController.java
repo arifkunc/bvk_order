@@ -1,8 +1,8 @@
 package com.bvktest.order.order.controller;
 
 import com.bvktest.order.common.model.DefaultResponse;
-import com.bvktest.order.common.model.SuccessResponsePayload;
 import com.bvktest.order.order.model.OrderProductRequest;
+import com.bvktest.order.order.model.OrderProductResponsePayload;
 import com.bvktest.order.order.object.OrderProductDto;
 import com.bvktest.order.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,10 @@ public class OrderProductController {
     }
 
     @PostMapping("/order/v1/order")
-    public ResponseEntity<DefaultResponse<SuccessResponsePayload>> orderProduct(@RequestBody OrderProductRequest request){
-        SuccessResponsePayload responsePayload = execute(request);
+    public ResponseEntity<DefaultResponse<OrderProductResponsePayload>> orderProduct(@RequestBody OrderProductRequest request){
+        OrderProductResponsePayload responsePayload = execute(request);
 
-        DefaultResponse<SuccessResponsePayload> response = DefaultResponse.<SuccessResponsePayload>builder()
+        DefaultResponse<OrderProductResponsePayload> response = DefaultResponse.<OrderProductResponsePayload>builder()
                 .traceId(request.getTraceId())
                 .time(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(OffsetDateTime.now()))
                 .data(responsePayload)
@@ -37,17 +37,18 @@ public class OrderProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private SuccessResponsePayload execute(OrderProductRequest request){
+    private OrderProductResponsePayload execute(OrderProductRequest request){
         OrderProductDto orderProductDto = OrderProductDto.builder()
                 .productId(request.getProductId())
+                .productName(request.getProductName())
                 .quantity(request.getQuantity())
+                .price(request.getPrice())
                 .build();
 
-        orderService.orderProduct(orderProductDto);
+        String orderId = orderService.orderProduct(orderProductDto);
 
-        return SuccessResponsePayload.builder()
-                .status("success")
-                .message("process is successfully done")
+        return OrderProductResponsePayload.builder()
+                .orderId(orderId)
                 .build();
     }
 }

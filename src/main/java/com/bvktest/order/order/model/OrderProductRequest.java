@@ -10,5 +10,7 @@ import lombok.*;
 public class OrderProductRequest {
     private String traceId;
     private String productId;
+    private String productName;
     private Integer quantity;
+    private Double price;
 }

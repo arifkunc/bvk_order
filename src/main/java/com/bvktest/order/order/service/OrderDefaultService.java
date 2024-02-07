@@ -3,6 +3,7 @@ package com.bvktest.order.order.service;
 import com.bvktest.order.order.client.object.UpdateProductQuantityRequest;
 import com.bvktest.order.order.client.object.UpdateProductQuantityResponse;
 import com.bvktest.order.order.object.OrderProductDto;
+import com.bvktest.order.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,18 +17,21 @@ import java.time.Instant;
 public class OrderDefaultService implements OrderService{
     private String apiUrlUpdateQuantity;
     private RestTemplate restTemplate;
+    private OrderRepository orderRepository;
 
     @Autowired
     public OrderDefaultService(@Value("${external-api.inventory.url.update-quantity}") String apiUrlUpdateQuantity,
-                               RestTemplateBuilder restTemplateBuilder) {
+                               RestTemplateBuilder restTemplateBuilder,
+                               OrderRepository orderRepository) {
         this.apiUrlUpdateQuantity = apiUrlUpdateQuantity;
         this.restTemplate = restTemplateBuilder
                 .requestFactory(HttpComponentsClientHttpRequestFactory.class)
                 .build();
+        this.orderRepository = orderRepository;
     }
 
     @Override
-    public void orderProduct(OrderProductDto orderProductDto) {
+    public String orderProduct(OrderProductDto orderProductDto) {
         // trigger update quantity to Inventory Microservice
         int quantityDelta = -orderProductDto.getQuantity();
 
@@ -41,8 +45,7 @@ public class OrderDefaultService implements OrderService{
                 UpdateProductQuantityResponse.class,
                 orderProductDto.getProductId());
 
-        System.out.println(updateProductQuantityResponse.getData().getMessage());
-
         // insert new order into database
+        return orderRepository.insertOrder(orderProductDto);
     }
 }

@@ -9,5 +9,7 @@ import lombok.*;
 @Setter
 public class OrderProductDto {
     private String productId;
+    private String productName;
     private Integer quantity;
+    private Double price;
 }
