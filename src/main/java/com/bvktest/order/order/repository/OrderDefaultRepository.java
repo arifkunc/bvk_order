@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
+
 @Repository
 public class OrderDefaultRepository implements OrderRepository {
     private final String SQL_GET_SEQ_ORDER_ID_NEXTVAL = "select lpad(nextval('seq_order_id'), 6, '0') from dual";
-    private final String SQL_INSERT_ORDER = "insert into orders values (?, ?, ?, ?, ?, ?)";
+    private final String SQL_INSERT_ORDER = "insert into orders values (?, ?, ?, ?, ?, ?, ?)";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -24,6 +26,7 @@ public class OrderDefaultRepository implements OrderRepository {
 
         jdbcTemplate.update(SQL_INSERT_ORDER,
                 orderId,
+                OffsetDateTime.now(),
                 orderProductDto.getProductId(),
                 orderProductDto.getProductName(),
                 orderProductDto.getQuantity(),

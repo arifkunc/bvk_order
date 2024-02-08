@@ -1,6 +1,7 @@
 -- structure
 create table orders (
     id varchar(6) not null,
+    order_time timestamp with time zone,
 	product_id varchar(6) not null,
     product_name varchar(255) not null,
     quantity int not null,
